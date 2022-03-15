@@ -16,6 +16,7 @@ namespace KiksAr.ShootingGame.Views
         private ParticleSystem ps;
         private Rigidbody rb;
         private float speed;
+        private bool release;
 
         void Awake()
         {
@@ -36,9 +37,16 @@ namespace KiksAr.ShootingGame.Views
                                                    Shooter.shooterInstance.gunMovement.transform.position.y,
                                                     Shooter.shooterInstance.gunMovement.transform.position.z + 2);      
             rb.AddForce(this.transform.forward * speed , ForceMode.Impulse);
-            ps.Play();       
+            ps.Play();
+            release = true;
+
 
         }
+        public bool BulletReleased()
+        {
+            return release;
+        }
+        
         void OnDisable()
         {
             ps.Stop();

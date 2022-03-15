@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using KiksAr.ShootingGame.Views;
+using UnityEngine.UI;
 
 namespace KiksAr.ShootingGame.Controller
 {
@@ -27,9 +28,10 @@ namespace KiksAr.ShootingGame.Controller
         
      
         private GameStatus gameStatus;
-        private int flag;
+        public int flag;
         public int hitItems;
         private bool bulletsround1Finished;
+        [SerializeField] private Text bulletsLeftText;
       
    
     
@@ -68,6 +70,7 @@ namespace KiksAr.ShootingGame.Controller
             }
             gameStatus = GameStatus.idle;
 
+
        }
        public void EnqueBullets(GameObject bullet)
        {
@@ -81,15 +84,14 @@ namespace KiksAr.ShootingGame.Controller
         void Update()
         {
 
-            if(Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
-            {
+            
                 switch (gameStatus)
                 {
                     case GameStatus.idle:
-                         if(bullets.Count > 0 )
+                        if(Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
                         {
-                        
-                          
+
+                      
                             if(flag < totalBullets)
                             {
                                 bullets.Dequeue().SetActive(true);
@@ -102,10 +104,9 @@ namespace KiksAr.ShootingGame.Controller
                                 
                                  
                             }
-                           
-                         
                         }
-                        
+                           
+                       
                            
                         break;
                     case GameStatus.won:    GameWon();
@@ -130,6 +131,7 @@ namespace KiksAr.ShootingGame.Controller
                     default:    
                         break;
                 }
+                bulletsLeftText.text = (totalBullets - flag).ToString();
 
                
                
@@ -137,7 +139,7 @@ namespace KiksAr.ShootingGame.Controller
 
 
 
-            }
+            
            
            
             gunMovement.MoveGun();
@@ -156,6 +158,12 @@ namespace KiksAr.ShootingGame.Controller
         private void GameLost()
         {
             ScoreController.scoreControllerInstance.GameLost();
+        }
+        public void RestartGame()
+        {
+              bulletsLeftText.text = (totalBullets - flag).ToString();
+
+            gameStatus = GameStatus.idle;
         }
         
     }

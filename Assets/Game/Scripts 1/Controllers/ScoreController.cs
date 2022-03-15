@@ -1,6 +1,7 @@
-using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 namespace KiksAr.ShootingGame.Controller
@@ -18,8 +19,8 @@ namespace KiksAr.ShootingGame.Controller
         [SerializeField] private Button restart;
    
         [SerializeField] private GameObject result;
-
-        
+        [SerializeField] private TMP_Text hitText;   
+        private int perfecthit = 10;     
        
        private void Awake()
        {
@@ -38,36 +39,53 @@ namespace KiksAr.ShootingGame.Controller
        }
        void OnDisable()
        {
-           restart.onClick.AddListener(RestartGame);
+           restart.onClick.RemoveListener(RestartGame);
        }
        private void RestartGame()
        {
-           SceneManager.LoadScene(0);
+        //   SceneManager.LoadScene(0);
+           count = 0;
+            countText.text = count.ToString();
+           scoreText.text = PlayerPrefs.GetInt("Score").ToString();
+           Shooter.shooterInstance.RestartGame();
+           result.SetActive(false);
+
+
        }
        public void UpdateScore(float score)
        {
+           int textCount;
            if(score < 2)
            {
-               count += 10;
+               textCount = 10;
+               count += textCount;
            }
            else if(score >= 2 && score < 4)
            {
-               count += 5;
+               textCount = 5;
+               count += textCount;
            }
            else
            {
-               count += 2;
+               textCount = 2;
+               count += textCount;
            }
 
 
-          
+          hitText.text = "+" + textCount.ToString();
            countText.text = count.ToString();
+           StartCoroutine(HitTextDisable());
 
 
        }
+        IEnumerator HitTextDisable()
+       {
+           yield return new WaitForSeconds(1);
+           hitText.text = "";
+       }
        public bool ReturnScore()
        {
-           if(count / Shooter.shooterInstance.totalBullets > (Shooter.shooterInstance.totalBullets * 10 / 2)) return true;
+           if(count  > (Shooter.shooterInstance.totalBullets * perfecthit / 2)) return true;
            else return false;
            
         
@@ -84,6 +102,7 @@ namespace KiksAr.ShootingGame.Controller
        {
            result.SetActive(true);
            won.gameObject.SetActive(true);
+           lost.gameObject.SetActive(false);
            ResetScore();
 
        }
@@ -91,6 +110,7 @@ namespace KiksAr.ShootingGame.Controller
        {
            result.SetActive(true);
            lost.gameObject.SetActive(true);
+           won.gameObject.SetActive(false);
            ResetScore();
        }
 
